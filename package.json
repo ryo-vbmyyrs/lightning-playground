@@ -1,0 +1,44 @@
+{
+  "name": "lightning-playground",
+  "private": true,
+  "version": "0.1.0",
+  "description": "Playground for Lightning Base Components that runs outside the Salesforce platform",
+  "type": "module",
+  "engines": {
+    "node": ">=22.18.0"
+  },
+  "scripts": {
+    "assets": "npm run assets:runtime && npm run assets:compiler && npm run assets:catalog",
+    "assets:runtime": "node scripts/build-runtime.ts",
+    "assets:compiler": "node scripts/build-compiler.ts",
+    "assets:catalog": "node scripts/build-catalog.ts",
+    "dev": "npm run assets && vite",
+    "build": "npm run typecheck && npm run assets && vite build",
+    "preview": "vite preview",
+    "typecheck": "tsc -b"
+  },
+  "dependencies": {
+    "react": "19.3.0",
+    "react-dom": "19.3.0"
+  },
+  "devDependencies": {
+    "@lwc/compiler": "9.4.3",
+    "@lwc/engine-dom": "9.4.3",
+    "@lwc/rollup-plugin": "9.4.3",
+    "@lwc/synthetic-shadow": "9.4.3",
+    "@rollup/plugin-replace": "6.0.3",
+    "@salesforce-ux/design-system": "2.264.1",
+    "@types/node": "26.6.2",
+    "@types/react": "19.3.0",
+    "@types/react-dom": "19.3.0",
+    "@vitejs/plugin-react": "6.1.1",
+    "buffer": "6.0.3",
+    "esbuild": "0.28.2",
+    "lightning-base-components": "1.28.19-alpha",
+    "path-browserify": "1.0.1",
+    "rollup": "4.63.5",
+    "typescript": "7.0.2",
+    "util": "0.12.5",
+    "vite": "8.3.1"
+  }
+}
