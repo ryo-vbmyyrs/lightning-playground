@@ -11,6 +11,7 @@ import { rollup, type Plugin, type RollupLog } from 'rollup';
 import lwc from '@lwc/rollup-plugin';
 import replace from '@rollup/plugin-replace';
 import type { RuntimeManifest } from '../src/shared/types.ts';
+import { recordBundledPackages } from './licenses.ts';
 import { closedGates, gateClosedStub, packageDir, projectRoot } from './paths.ts';
 
 const entriesDir = path.join(projectRoot, '.generated/runtime-entries');
@@ -116,6 +117,7 @@ async function buildRuntime(): Promise<void> {
     manifest.imports[specifier] = chunk.fileName;
   }
   await writeFile(path.join(runtimeOutDir, 'manifest.json'), JSON.stringify(manifest, null, 2));
+  await recordBundledPackages('runtime', output.flatMap((chunk) => (chunk.type === 'chunk' ? chunk.moduleIds : [])));
 
   for (const [key, count] of warningCounts) console.warn(`  warning x${count}: ${key}`);
   console.log(`runtime: ${Object.keys(manifest.imports).length} entries -> ${path.relative(projectRoot, runtimeOutDir)}`);
@@ -128,6 +130,7 @@ async function copySlds(): Promise<void> {
   await cp(path.join(sldsDir, 'assets', stylesheet), path.join(sldsOutDir, stylesheet));
   // The stylesheet references ../images/*; icons are inlined by the base components, so assets/icons is skipped.
   await cp(path.join(sldsDir, 'assets/images'), path.join(sldsOutDir, 'images'), { recursive: true });
+  await recordBundledPackages('slds', [path.join(sldsDir, 'package.json')]);
   console.log(`slds: copied -> ${path.relative(projectRoot, sldsOutDir)}`);
 }
 

@@ -3,6 +3,7 @@
 // browser polyfills or no-op shims. Output: public/generated/compiler.worker.js
 import path from 'node:path';
 import { build } from 'esbuild';
+import { recordBundledPackages } from './licenses.ts';
 import { projectRoot } from './paths.ts';
 
 const emptyShim = path.join(projectRoot, 'scripts/shims/node-empty.cjs');
@@ -21,7 +22,7 @@ for (const name of emptyModules) {
 
 const outfile = path.join(projectRoot, 'public/generated/compiler.worker.js');
 
-await build({
+const { metafile } = await build({
   entryPoints: [path.join(projectRoot, 'src/worker/compiler.worker.ts')],
   outfile,
   bundle: true,
@@ -30,6 +31,7 @@ await build({
   target: 'es2022',
   minify: true,
   legalComments: 'external',
+  metafile: true,
   alias,
   inject: [path.join(projectRoot, 'scripts/shims/buffer-global.js')],
   define: { 'process.env.NODE_ENV': JSON.stringify('production') },
@@ -38,5 +40,8 @@ await build({
   },
   logLevel: 'warning',
 });
+
+// metafile input paths are relative to the working directory.
+await recordBundledPackages('compiler', Object.keys(metafile.inputs).map((input) => path.resolve(input)));
 
 console.log(`compiler: ${path.relative(projectRoot, outfile)}`);

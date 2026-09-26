@@ -8,7 +8,7 @@ Lightning Base Components（`lightning-input` などの標準 LWC）を Salesfor
 | [research.md](./research.md) | 事前調査の結果（プラットフォーム外で動かせるか、ハマりどころ） |
 | [architecture.md](./architecture.md) | 全体構成とデータの流れ |
 | [decisions.md](./decisions.md) | 設計判断の記録（なぜそうしたか） |
-| [dependencies.md](./dependencies.md) | 依存パッケージ一覧とインストール前レビュー用の情報 |
+| [dependencies.md](./dependencies.md) | 依存パッケージ一覧とインストール前レビュー用の情報、ライセンス |
 
 ## 現在のステータス（2026-09-26）
 

@@ -5,6 +5,7 @@ import { mkdir, readdir, readFile, writeFile } from 'node:fs/promises';
 import { existsSync } from 'node:fs';
 import path from 'node:path';
 import type { Catalog, CatalogComponent, Example, SourceFile } from '../src/shared/types.ts';
+import { recordBundledPackages } from './licenses.ts';
 import { packageDir, projectRoot } from './paths.ts';
 
 interface RaptorEntry {
@@ -91,6 +92,8 @@ async function buildCatalog(): Promise<void> {
   const catalog: Catalog = { packageVersion: pkg.version, components };
   await mkdir(path.dirname(outFile), { recursive: true });
   await writeFile(outFile, JSON.stringify(catalog));
+  // The catalog embeds the package's example sources.
+  await recordBundledPackages('catalog', [path.join(lbcDir, 'package.json')]);
   const exampleCount = components.reduce((sum, c) => sum + c.examples.length, 0);
   console.log(`catalog: ${components.length} components, ${exampleCount} examples -> ${path.relative(projectRoot, outFile)}`);
 }

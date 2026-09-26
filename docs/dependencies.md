@@ -44,7 +44,7 @@
 - deprecated: なし
 - ライセンス: MIT 207 / Apache-2.0 23 / MPL-2.0 12 / ISC 7 / BSD-3-Clause 3 / CC-BY-4.0 1
   - MPL-2.0: `lightningcss` とそのプラットフォーム別バイナリ（Vite の依存）
-  - CC-BY-4.0: `caniuse-lite`（ブラウザ対応データ。ビルド時のみ使用）
+  - CC-BY-4.0: `caniuse-lite`（ブラウザ対応データ）。`@lwc/compiler` → Babel → browserslist 経由でコンパイラ Worker にもバンドルされる
 - install スクリプトを持つパッケージ:
   - `esbuild`: postinstall でプラットフォーム別バイナリを確認する。`ignore-scripts=true` でスキップされるが、バイナリは optional 依存（`@esbuild/darwin-arm64` など）として入るので通常は問題なく動く。
   - `fsevents`: macOS 用のファイル監視（Rollup/Vite の optional 依存）。v2 はビルド済みバイナリ同梱のためスクリプトなしでも動く。
@@ -61,3 +61,12 @@ npm install
 ## ブラウザに配信されるもの
 
 プレビュー用 iframe とコンパイラ Worker には、上記のうち `@lwc/engine-dom`、`@lwc/synthetic-shadow`、`lightning-base-components`、`@lwc/compiler`（と Babel などの推移的依存）、ポリフィル 3 種、SLDS の CSS がバンドルされて配信される。
+
+## ライセンス
+
+- 配信物に入るパッケージのライセンス文は、`npm run build` で `dist/THIRD_PARTY_NOTICES.txt` にまとめて出力される（[decisions.md](./decisions.md) #14）。2026-09-27 時点で 120 パッケージ（MIT 109 / ISC 7 / BSD-3-Clause 2 / Apache-2.0 1 / CC-BY-4.0 1）。
+- 注意が必要なもの:
+  - `lightning-base-components`: `package.json` は `MIT` だが、実際のライセンスは同梱 `LICENSE.txt` の Salesforce Terms of Use。再配布・改変は許可されているが、規約を複製物に含めること、Salesforce への補償（indemnify）義務、カリフォルニア州法準拠などの条件が付く。OSS ライセンスではない。
+  - `@salesforce-ux/design-system`: コードは BSD-3-Clause、アイコン・画像は CC BY-ND 4.0（改変禁止）。パッケージにライセンスファイルがないため、公式リポジトリ（salesforce-ux/licenses）の原文を `scripts/licenses/` に置いている。Salesforce Sans フォントはプラットフォーム外で使えないライセンスのため配信しない。
+- MPL-2.0 の `lightningcss` はビルド時にしか使わず、配信物には入らない。
+

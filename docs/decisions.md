@@ -117,3 +117,25 @@ native ではページ全体に読み込んだ SLDS の CSS がユーザーの�
 - **`defaultModules` から `@lwc/wire-service` を外す**。`@lwc/rollup-plugin` は既定で `@lwc/engine-dom` / `@lwc/synthetic-shadow` / `@lwc/wire-service` を解決しようとするが、Base Components は wire service を使わないので、依存パッケージを増やさないために外した（事前調査の PoC では `lwc` メタパッケージ経由で入っていたため問題にならなかった）。
 - **`enableDynamicComponents: true`**。一部のモジュール（`multiColumnSortingModal` など）が `lwc:is`（動的コンポーネント）を使っているため。Salesforce 上でも使える機能なので、ブラウザ内コンパイラ（ユーザーコード）でも同じく有効にしている。
 - 既知の制限: `lightning/navigation`（`force/navigation` に依存）、`lightning/barcodeScanner`（`lightning/mobileCapabilities` に依存）、`lightning/primitiveFigure`（非公開の `lightning/primitiveUtils` に依存）は、依存先がパッケージに含まれないため読み込むとエラーになる。プラットフォーム専用機能なので、プレイグラウンドでは対応しない。
+
+## #14 ライセンス対応（2026-09-27）
+
+リポジトリを public にしたため、ライセンス面の対応を入れた。
+
+- **このプロジェクト自身のコードは MIT**（ルートの `LICENSE`）。
+- **ビルド成果物に `THIRD_PARTY_NOTICES.txt` を含める**。`npm run build` で `dist/THIRD_PARTY_NOTICES.txt` が出力される。
+  - 対象は、実際に配信物に入るパッケージだけ。各アセットのビルド（Rollup の `moduleIds`、esbuild の `metafile`、SLDS のコピー、カタログ）が使ったパッケージを `.generated/bundled-packages/` に記録し、Vite のビルドでアプリ本体（React など）のモジュールと合わせて集計する（`scripts/licenses.ts`）。
+  - ライセンスファイルを同梱していないパッケージは、ビルドを失敗させる。`scripts/licenses/` にライセンス文を置き、`vendoredLicenses` に登録して対応する（現在は `@salesforce-ux/design-system` と `isarray`）。
+- リポジトリ自体には Salesforce のコードや画像を含めない（#11 のとおり生成物は git 管理対象外）。再配布になるのはビルド成果物を公開したときだけ。
+
+理由:
+
+- `lightning-base-components` は `package.json` 上は `MIT` だが、同梱の `LICENSE.txt` は Salesforce 独自の Terms of Use で、「複製物には規約を含めること」が条件になっている。
+- SLDS のアイコン・画像は CC BY-ND 4.0 で、クレジットの表示が必要になる。改変も禁止されているので、`slds/images` は加工せずにそのままコピーしている。
+- MIT / BSD / ISC / Apache-2.0 / CC-BY-4.0 はいずれも著作権表示やライセンス文の同梱が必要。バンドルするとファイル先頭のコメントが消えることがあるので、全文をまとめて置く。
+
+注意:
+
+- **Salesforce Sans フォントは配信しない**。フォントのライセンス（salesforce-ux/licenses の `LICENSE-font.txt`）は Salesforce プラットフォーム上のアプリでの利用に限られる。現在の SLDS パッケージにはフォントが入っておらず、CSS からの参照もない。
+- 「Salesforce」「Lightning」は Salesforce の商標なので、公式と誤解されないようにする（`THIRD_PARTY_NOTICES.txt` の冒頭に非公式である旨を記載）。
+
